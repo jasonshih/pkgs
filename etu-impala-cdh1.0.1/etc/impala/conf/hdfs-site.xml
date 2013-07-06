@@ -1,0 +1,203 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+
+<property>
+  <name>dfs.namenode.name.dir</name>
+  <value>file:///var/disk/a/hadoop/namenode,file:///var/disk/b/hadoop/namenode,file:///var/disk/c/hadoop/namenode,file:///var/disk/d/hadoop/namenode,file:///var/disk/e/hadoop/namenode,file:///var/disk/f/hadoop/namenode,file:///var/disk/g/hadoop/namenode,file:///var/disk/h/hadoop/namenode,file:///var/disk/i/hadoop/namenode,file:///var/disk/j/hadoop/namenode,file:///var/disk/k/hadoop/namenode,file:///var/disk/l/hadoop/namenode,file:///var/disk/m/hadoop/namenode,file:///var/disk/n/hadoop/namenode,file:///var/disk/o/hadoop/namenode,file:///var/disk/p/hadoop/namenode,file:///var/disk/q/hadoop/namenode,file:///var/disk/r/hadoop/namenode,file:///var/disk/s/hadoop/namenode,file:///var/disk/t/hadoop/namenode,file:///var/disk/u/hadoop/namenode,file:///var/disk/v/hadoop/namenode,file:///var/disk/w/hadoop/namenode,file:///var/disk/x/hadoop/namenode,file:///var/disk/y/hadoop/namenode,file:///var/disk/z/hadoop/namenode</value>
+</property>
+
+<property>
+  <name>dfs.namenode.replication.min</name>
+  <value>1</value>
+</property>
+
+<!-- start impala  -->
+<property>
+ <name>dfs.client.read.shortcircuit</name>
+  <value>true</value>
+</property>
+
+<property>
+  <name>dfs.domain.socket.path</name>
+  <value>/opt/impala/var/run/hadoop-hdfs/dn._PORT</value>
+</property>
+
+<property>
+  <name>dfs.client.file-block-storage-locations.timeout</name>
+  <value>3000</value>
+</property>
+
+<property>
+    <name>dfs.client.file-block-storage-locations.timeout</name>
+    <value>3000</value>
+</property>
+
+<!-- end impapa  -->
+
+<property>
+  <name>dfs.replication.max</name>
+  <value>10</value>
+</property>
+
+<property>
+  <name>dfs.thrift.address</name>
+  <value>0.0.0.0:10090</value>
+</property>
+
+<property>
+  <name>dfs.replication</name>
+  <value>3</value>
+</property>
+ 
+<property>
+  <name>dfs.blocksize</name>
+  <value>134217728</value>
+</property>
+
+<property>
+  <name>dfs.namenode.accesstime.precision</name>
+  <value>3600000</value>
+</property>
+
+<property>
+  <name>fs.permissions.umask-mode</name>
+  <value>077</value>
+</property>
+
+<property>
+  <name>dfs.datanode.max.transfer.threads</name>
+  <value>4096</value>
+</property>
+
+<property>
+  <name>dfs.datanode.failed.volumes.tolerated</name>
+  <value>FAILED_TOLERATED_VOLUME</value>
+</property>
+
+<!-- avoid URI warning from org.apache.hadoop.hdfs.server.common.Util -->
+<property>
+  <name>dfs.datanode.data.dir</name>
+  <value>DN_DATA_DIR</value>
+</property>
+
+<property>
+  <name>dfs.datanode.data.dir.perm</name>
+  <value>700</value>
+</property>
+
+<property>
+  <name>dfs.datanode.max.xcievers</name>
+  <value>8192</value>
+</property>
+ 
+
+
+
+<!-- exclude list for possible decommissioning request, should be identical for both mapreduce and HDFS -->
+<property>
+   <name>dfs.hosts.exclude</name>
+   <value>/opt/hadoop/etc/hadoop/etu_worker_decommission</value>
+</property>
+
+<property>
+  <name>hadoop.http.staticuser.user</name>
+  <value>${user.name},supergroup</value>
+</property>
+
+<property>
+  <name>mapred.compress.map.output</name>
+  <value>false</value>
+</property>
+
+<property>
+  <name>mapred.map.output.compression.codec</name>
+  <value>com.hadoop.compression.lzo.LzoCodec</value>
+</property>
+
+<!-- Start Etu General HDFS security config -->
+<property>
+  <name>dfs.block.access.token.enable</name>
+  <value>true</value>
+</property>
+ 
+<!-- NameNode security config -->
+<property>
+  <name>dfs.namenode.keytab.file</name>
+  <value>/opt/etu/config_templates/hadoop/hadoop.keytab</value>
+</property>
+
+<property>
+  <name>dfs.namenode.kerberos.principal</name>
+  <value>etu/_HOST@ETUDOMAIN.COM</value>
+</property>
+
+<property>
+  <name>dfs.namenode.kerberos.internal.spnego.principal</name>
+  <value>HTTP/_HOST@ETUDOMAIN.COM</value>
+</property>
+
+<!-- Secondary NameNode security config -->
+<property>
+  <name>dfs.secondary.https.address</name>
+  <value>etu-master.etudomain.com:50495</value>
+</property>
+<property>
+  <name>dfs.secondary.https.port</name>
+  <value>50495</value>
+</property>
+<property>
+  <name>dfs.secondary.namenode.keytab.file</name>
+  <value>/opt/etu/config_templates/hadoop/hadoop.keytab</value>
+</property>
+<property>
+  <name>dfs.secondary.namenode.kerberos.principal</name>
+  <value>etu/_HOST@ETUDOMAIN.COM</value>
+</property>
+
+<property>
+  <name>dfs.secondary.namenode.kerberos.internal.spnego.principal</name>
+  <value>HTTP/_HOST@ETUDOMAIN.COM</value>
+</property>
+
+<!-- DFS Web restful access -->
+<property>
+  <name>dfs.webhdfs.enabled</name>
+  <value>true</value>
+</property>
+
+<property>
+  <name>dfs.web.authentication.kerberos.principal</name>
+  <value>HTTP/_HOST@ETUDOMAIN.COM</value>
+</property>
+
+<property>
+  <name>dfs.web.authentication.kerberos.keytab</name>
+  <value>/opt/etu/config_templates/hadoop/hadoop.keytab</value>
+</property>
+
+
+<!-- DataNode security config -->
+<property>
+  <name>dfs.datanode.data.dir.perm</name>
+  <value>700</value>
+</property>
+<property>
+  <name>dfs.datanode.address</name>
+  <value>0.0.0.0:1004</value>
+</property>
+<property>
+  <name>dfs.datanode.http.address</name>
+  <value>0.0.0.0:1006</value>
+</property>
+<property>
+  <name>dfs.datanode.keytab.file</name>
+  <value>/opt/etu/config_templates/hadoop/hadoop.keytab</value>
+</property>
+<property>
+  <name>dfs.datanode.kerberos.principal</name>
+  <value>etu/_HOST@ETUDOMAIN.COM</value>
+</property>
+<!-- End Etu DataNode security config -->
+</configuration>
+

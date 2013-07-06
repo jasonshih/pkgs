@@ -1,0 +1,49 @@
+# -js- Etu customization
+ETU_CONFIG=/opt/etu/etc/config.properties
+if [ -f $ETU_CONFIG ]; then
+   . $ETU_CONFIG
+fi
+MASTER_FQDN=$USER_HOST_NAME.$USER_DOMAIN
+MASTER_IPADDR=`host $MASTER_FQDN | awk '{print $(NF)}'`
+ETU_IMPALA=/opt/impala
+IMPALA_LOG_DIR=${ETU_IMPALA}/var/log/impala
+IMPALA_STATE_STORE_HOST=${MASTER_IPADDR}
+IMPALA_STATE_STORE_PORT=24000
+IMPALA_BACKEND_PORT=22000
+JAVA_HOME=/opt/java
+
+IMPALA_STATE_STORE_ARGS=" -log_dir=${IMPALA_LOG_DIR} -state_store_port=${IMPALA_STATE_STORE_PORT}"
+IMPALA_SERVER_ARGS=" \
+    -log_dir=${IMPALA_LOG_DIR} \
+    -state_store_port=${IMPALA_STATE_STORE_PORT} \
+    -use_statestore \
+    -state_store_host=${IMPALA_STATE_STORE_HOST} \
+    -be_port=${IMPALA_BACKEND_PORT}"
+
+# other param
+ENABLE_CORE_DUMPS=false
+LIBHDFS_OPTS=-Djava.library.path=${ETU_IMPALA}/lib/impala/lib
+MYSQL_CONNECTOR_JAR=/usr/share/java/mysql-connector-java.jar
+MYSQL_CONNECTOR_JAR=/opt/hive/lib/postgresql-9.1-901.jdbc4.jar
+IMPALA_BIN=${ETU_IMPALA}/lib/impala/sbin
+IMPALA_HOME=${ETU_IMPALA}/lib/impala
+IMPALA_CONF_DIR=${ETU_IMPALA}/etc/impala/conf
+# deployed ecosystem, def with v2 hdfs
+if [ ! -z $HADOOP_HOME ]; then
+   HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
+else
+   HADOOP_CONF_DIR=${ETU_IMPALA}/etc/impala/conf
+fi
+if [ ! -z $HIVE_HOME ]; then
+   HIVE_CONF_DIR=$HIVE_HOME/conf
+else
+   HIVE_HOME=${ETU_IMPALA}/lib/hive
+   HIVE_CONF_DIR=${ETU_IMPALA}/etc/impala/conf
+fi
+
+if [ ! -z $HBASE_HOME ]; then
+   HBASE_CONF_DIR=$HBASE_HOME/conf
+else
+   HBASE_HOME=${ETU_IMPALA}/lib/hbase
+   HBASE_CONF_DIR=${ETU_IMPALA}/etc/impala/conf
+fi

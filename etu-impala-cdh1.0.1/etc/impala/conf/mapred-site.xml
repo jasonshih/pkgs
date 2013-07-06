@@ -1,0 +1,166 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+
+<property>
+  <name>mapred.local.dir</name>
+  <value>/var/disk/a/hadoop/mapred/local,/var/disk/b/hadoop/mapred/local,/var/disk/c/hadoop/mapred/local,/var/disk/d/hadoop/mapred/local,/var/disk/e/hadoop/mapred/local,/var/disk/f/hadoop/mapred/local,/var/disk/g/hadoop/mapred/local,/var/disk/h/hadoop/mapred/local,/var/disk/i/hadoop/mapred/local,/var/disk/j/hadoop/mapred/local,/var/disk/k/hadoop/mapred/local,/var/disk/l/hadoop/mapred/local,/var/disk/m/hadoop/mapred/local,/var/disk/n/hadoop/mapred/local,/var/disk/o/hadoop/mapred/local,/var/disk/p/hadoop/mapred/local,/var/disk/q/hadoop/mapred/local,/var/disk/r/hadoop/mapred/local,/var/disk/s/hadoop/mapred/local,/var/disk/t/hadoop/mapred/local,/var/disk/u/hadoop/mapred/local,/var/disk/v/hadoop/mapred/local,/var/disk/w/hadoop/mapred/local,/var/disk/x/hadoop/mapred/local,/var/disk/y/hadoop/mapred/local,/var/disk/z/hadoop/mapred/local</value>
+</property>
+
+<property>
+  <name>mapred.job.tracker</name>
+  <value>etu-master.etudomain.com:9001</value>
+</property>
+
+<property>
+  <name>mapred.child.java.opts</name>
+  <value>-Xmx256m</value>
+</property>
+
+<property>
+  <name>mapred.job.reuse.jvm.num.tasks</name>
+  <value>1</value>
+</property>
+
+<property>
+  <name>mapred.tasktracker.map.tasks.maximum</name>
+  <value>8</value>
+</property>
+<property>
+  <name>mapred.tasktracker.reduce.tasks.maximum</name>
+  <value>5</value>
+</property>
+
+<property>
+  <name>jobtracker.thrift.address</name>
+  <value>0.0.0.0:9290</value>
+</property>
+<property>
+  <name>mapred.jobtracker.plugins</name>
+  <value>org.apache.hadoop.thriftfs.ThriftJobTrackerPlugin</value>
+</property>
+<property>
+  <name>io.sort.mb</name>
+  <value>100</value>
+</property>
+
+<property> 
+  <name>mapred.jobtracker.taskScheduler</name> 
+  <value>org.apache.hadoop.mapred.FairScheduler</value> 
+</property>
+
+
+<property>
+  <name>mapred.output.compress</name>
+  <value>false</value>
+</property>
+
+<property>
+  <name>mapred.output.compression.codec</name>
+  <value>com.hadoop.compression.lzo.LzopCodec</value>
+</property>
+
+<property>
+  <name>mapred.job.shuffle.input.buffer.percent</name>
+  <value>0.7</value>
+</property>
+
+<property>
+  <name>mapred.job.shuffle.merge.percent</name>
+  <value>0.66</value>
+</property>
+
+<property>
+  <name>mapred.job.reduce.input.buffer.percent</name>
+  <value>0.0</value>
+</property>
+
+<property>
+  <name>mapred.inmem.merge.threshold</name>
+  <value>1000</value>
+</property>
+
+<property>
+  <name>mapreduce.reduce.merge.memtomem.enable</name>
+  <value>true</value>
+</property>
+
+<property>
+  <name>io.sort.factor</name>
+  <value>10</value>
+</property>
+
+<property>
+  <name>io.sort.record.percent</name>
+  <value>0.05</value>
+</property>
+
+<property>
+  <name>io.sort.spill.percent</name>
+  <value>0.8</value>
+</property>
+
+<property>
+  <name>mapred.reduce.parallel.copies</name>
+  <value>20</value>
+</property>
+
+<property>
+  <name>tasktracker.http.threads</name>
+  <value>50</value>
+</property>
+
+
+
+<!-- turn on lzo compression to speed up mr exec -->
+ <property>
+   <name>java.library.path</name>
+   <value>/opt/hadoopmr/lib/native/Linux-amd64-64</value>
+ </property>
+ 
+<!-- exclude list for possible decommissioning request, should be identical for both mapreduce and HDFS -->
+<property>
+   <name>mapred.hosts.exclude</name>
+   <value>/opt/hadoop/etc/hadoop/etu_worker_decommission</value>
+</property>
+
+
+<!-- Etu MRv1 security config -->
+<!-- JobTracker security configs -->
+ <property>
+   <name>mapreduce.jobtracker.kerberos.principal</name>
+   <value>etu/_HOST@ETUDOMAIN.COM</value>
+ </property>
+
+ <property>
+   <name>mapreduce.jobtracker.keytab.file</name>
+   <value>/opt/etu/config_templates/hadoop/hadoop.keytab</value>
+ </property>
+  
+ <!-- TaskTracker security configs -->
+ <property>
+   <name>mapreduce.tasktracker.kerberos.principal</name>
+   <value>etu/_HOST@ETUDOMAIN.COM</value>
+ </property>
+
+ <property>
+   <name>mapreduce.tasktracker.keytab.file</name>
+   <value>/opt/etu/config_templates/hadoop/hadoop.keytab</value>
+ </property>
+  
+ <!-- TaskController settings -->
+ <property>
+   <name>mapred.task.tracker.task-controller</name>
+   <value>org.apache.hadoop.mapred.LinuxTaskController</value>
+ </property>
+ <property>
+   <name>mapreduce.tasktracker.group</name>
+   <value>etu</value>
+ </property>
+
+ <property>
+   <name>mapred.submit.replication</name>
+   <value>1</value>
+ </property>
+
+</configuration>

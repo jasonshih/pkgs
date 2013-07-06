@@ -1,0 +1,60 @@
+#!/bin/bash
+
+export IMPALA_BIN=${IMPALA_BIN:-/usr/lib/impala/sbin}
+export IMPALA_HOME=${IMPALA_HOME:-/usr/lib/impala}
+export HIVE_HOME=${HIVE_HOME:-/usr/lib/hive}
+export HBASE_HOME=${HBASE_HOME:-/usr/lib/hbase}
+export IMPALA_CONF_DIR=${IMPALA_CONF_DIR:-/etc/impala/conf}
+export HADOOP_CONF_DIR=${HADOOP_CONF_DIR:-/etc/impala/conf}
+export HIVE_CONF_DIR=${HIVE_CONF_DIR:-/etc/impala/conf}
+export HBASE_CONF_DIR=${HBASE_CONF_DIR:-/etc/impala/conf}
+export LIBHDFS_OPTS=${LIBHDFS_OPTS:--Djava.library.path=/usr/lib/impala/lib}
+export MYSQL_CONNECTOR_JAR=${MYSQL_CONNECTOR_JAR:-/usr/share/java/mysql-connector-java.jar}
+
+if [ "$ENABLE_CORE_DUMPS" == "true" ] ; then
+    ulimit -c unlimited
+elif [ -z "$ENABLE_CORE_DUMPS" -o "$ENABLE_CORE_DUMPS" == "false" ] ; then
+    ulimit -c 0
+else
+    echo 'WARNING: $ENABLE_CORE_DUMPS must be either "true" or "false"'
+fi
+
+# Autodetect JAVA_HOME if not defined
+if [ -e /usr/libexec/bigtop-detect-javahome ]; then
+  . /usr/libexec/bigtop-detect-javahome
+elif [ -e /usr/lib/bigtop-utils/bigtop-detect-javahome ]; then
+  . /usr/lib/bigtop-utils/bigtop-detect-javahome
+fi
+
+# ensure that java has already been found
+if [ -z "${JAVA_HOME}" ]; then
+  echo "Unable to find Java. JAVA_HOME should be set in /etc/default/bigtop-utils"
+  exit 1
+fi
+
+# Autodetect location of native java libraries
+for library in libjvm.so libjsig.so libjava.so; do
+    library_file=`find ${JAVA_HOME}/ -name $library | head -1`
+    if [ -n "$library_file" ] ; then
+        library_dir=`dirname $library_file`
+        export LD_LIBRARY_PATH=$library_dir:${LD_LIBRARY_PATH}
+    fi
+done
+export LD_LIBRARY_PATH="${IMPALA_HOME}/lib:${IMPALA_BIN}:${LD_LIBRARY_PATH}"
+
+export CLASSPATH="${IMPALA_HOME}/lib/libthrift-0.9.0.jar::${IMPALA_HOME}/lib/JavaEWAH-0.3.2.jar:${IMPALA_HOME}/lib/ST4-4.0.4.jar:${IMPALA_HOME}/lib/activation-1.1.jar:${IMPALA_HOME}/lib/ant-1.8.1.jar:${IMPALA_HOME}/lib/ant-contrib-1.0b3.jar:${IMPALA_HOME}/lib/ant-launcher-1.8.1.jar:${IMPALA_HOME}/lib/ant-nodeps-1.8.1.jar:${IMPALA_HOME}/lib/antlr-3.4.jar:${IMPALA_HOME}/lib/antlr-runtime-3.0.1.jar:${IMPALA_HOME}/lib/aopalliance-1.0.jar:${IMPALA_HOME}/lib/asm-3.2.jar:${IMPALA_HOME}/lib/avro-1.7.4.jar:${IMPALA_HOME}/lib/avro-ipc-1.7.4-tests.jar:${IMPALA_HOME}/lib/avro-ipc-1.7.4.jar:${IMPALA_HOME}/lib/avro-mapred-1.7.4-hadoop2.jar:${IMPALA_HOME}/lib/commons-beanutils-1.7.0.jar:${IMPALA_HOME}/lib/commons-beanutils-core-1.8.0.jar:${IMPALA_HOME}/lib/commons-cli-1.2.jar:${IMPALA_HOME}/lib/commons-codec-1.4.jar:${IMPALA_HOME}/lib/commons-collections-3.2.1.jar:${IMPALA_HOME}/lib/commons-compress-1.4.1.jar:${IMPALA_HOME}/lib/commons-configuration-1.6.jar:${IMPALA_HOME}/lib/commons-dbcp-1.4.jar:${IMPALA_HOME}/lib/commons-digester-1.8.jar:${IMPALA_HOME}/lib/commons-el-1.0.jar:${IMPALA_HOME}/lib/commons-httpclient-3.1.jar:${IMPALA_HOME}/lib/commons-io-2.1.jar:${IMPALA_HOME}/lib/commons-lang-2.5.jar:${IMPALA_HOME}/lib/commons-logging-1.1.1.jar:${IMPALA_HOME}/lib/commons-logging-api-1.1.jar:${IMPALA_HOME}/lib/commons-pool-1.5.4.jar:${IMPALA_HOME}/lib/core-3.1.1.jar:${IMPALA_HOME}/lib/datanucleus-connectionpool-2.0.3.jar:${IMPALA_HOME}/lib/datanucleus-core-2.0.3.jar:${IMPALA_HOME}/lib/datanucleus-enhancer-2.0.3.jar:${IMPALA_HOME}/lib/datanucleus-rdbms-2.0.3.jar:${IMPALA_HOME}/lib/derby-10.4.2.0.jar:${IMPALA_HOME}/lib/gmbal-api-only-3.0.0-b023.jar:${IMPALA_HOME}/lib/grizzly-framework-2.1.1-tests.jar:${IMPALA_HOME}/lib/grizzly-framework-2.1.1.jar:${IMPALA_HOME}/lib/grizzly-http-2.1.1.jar:${IMPALA_HOME}/lib/grizzly-http-server-2.1.1.jar:${IMPALA_HOME}/lib/grizzly-http-servlet-2.1.1.jar:${IMPALA_HOME}/lib/grizzly-rcm-2.1.1.jar:${IMPALA_HOME}/lib/guava-11.0.2.jar:${IMPALA_HOME}/lib/guice-3.0.jar:${IMPALA_HOME}/lib/guice-servlet-3.0.jar:${IMPALA_HOME}/lib/hadoop-annotations-2.0.0-cdh4.3.0.jar:${IMPALA_HOME}/lib/hadoop-auth-2.0.0-cdh4.3.0.jar:${IMPALA_HOME}/lib/hadoop-common-2.0.0-cdh4.3.0.jar:${IMPALA_HOME}/lib/hadoop-hdfs-2.0.0-cdh4.3.0.jar:${IMPALA_HOME}/lib/hadoop-mapreduce-client-core-2.0.0-cdh4.3.0.jar:${IMPALA_HOME}/lib/hadoop-yarn-api-2.0.0-cdh4.3.0.jar:${IMPALA_HOME}/lib/hadoop-yarn-common-2.0.0-cdh4.3.0.jar:${IMPALA_HOME}/lib/haivvreo-1.0.7-cdh-4.jar:${IMPALA_HOME}/lib/hbase-0.94.6-cdh4.3.0.jar:${IMPALA_HOME}/lib/high-scale-lib-1.1.1.jar:${IMPALA_HOME}/lib/hive-common-0.10.0-cdh4.3.0.jar:${IMPALA_HOME}/lib/hive-contrib-0.10.0-cdh4.3.0.jar:${IMPALA_HOME}/lib/hive-exec-0.10.0-cdh4.3.0.jar:${IMPALA_HOME}/lib/hive-hbase-handler-0.10.0-cdh4.3.0.jar:${IMPALA_HOME}/lib/hive-jdbc-0.10.0-cdh4.3.0.jar:${IMPALA_HOME}/lib/hive-metastore-0.10.0-cdh4.3.0.jar:${IMPALA_HOME}/lib/hive-serde-0.10.0-cdh4.3.0.jar:${IMPALA_HOME}/lib/hive-service-0.10.0-cdh4.3.0.jar:${IMPALA_HOME}/lib/hive-shims-0.10.0-cdh4.3.0.jar:${IMPALA_HOME}/lib/hsqldb-2.2.8.jar:${IMPALA_HOME}/lib/httpclient-4.1.3.jar:${IMPALA_HOME}/lib/httpcore-4.1.3.jar:${IMPALA_HOME}/lib/impala-frontend-0.1-SNAPSHOT.jar:${IMPALA_HOME}/lib/jackson-core-asl-1.8.8.jar:${IMPALA_HOME}/lib/jackson-jaxrs-1.8.8.jar:${IMPALA_HOME}/lib/jackson-mapper-asl-1.8.8.jar:${IMPALA_HOME}/lib/jackson-xc-1.8.8.jar:${IMPALA_HOME}/lib/jamon-runtime-2.3.1.jar:${IMPALA_HOME}/lib/jasper-compiler-5.5.23.jar:${IMPALA_HOME}/lib/jasper-runtime-5.5.23.jar:${IMPALA_HOME}/lib/java-cup-0.11a.jar:${IMPALA_HOME}/lib/javax.inject-1.jar:${IMPALA_HOME}/lib/javax.servlet-3.0.jar:${IMPALA_HOME}/lib/jaxb-api-2.1.jar:${IMPALA_HOME}/lib/jaxb-impl-2.2.3-1.jar:${IMPALA_HOME}/lib/jdk.tools-1.6.jar:${IMPALA_HOME}/lib/jdo2-api-2.3-eb.jar:${IMPALA_HOME}/lib/jersey-client-1.8.jar:${IMPALA_HOME}/lib/jersey-core-1.8.jar:${IMPALA_HOME}/lib/jersey-grizzly2-1.8.jar:${IMPALA_HOME}/lib/jersey-guice-1.8.jar:${IMPALA_HOME}/lib/jersey-json-1.8.jar:${IMPALA_HOME}/lib/jersey-server-1.8.jar:${IMPALA_HOME}/lib/jersey-test-framework-core-1.8.jar:${IMPALA_HOME}/lib/jersey-test-framework-grizzly2-1.8.jar:${IMPALA_HOME}/lib/jettison-1.1.jar:${IMPALA_HOME}/lib/jetty-6.1.26.cloudera.2.jar:${IMPALA_HOME}/lib/jetty-util-6.1.26.cloudera.2.jar:${IMPALA_HOME}/lib/jline-0.9.94.jar:${IMPALA_HOME}/lib/jruby-complete-1.6.5.jar:${IMPALA_HOME}/lib/json-20090211.jar:${IMPALA_HOME}/lib/jsp-2.1-6.1.14.jar:${IMPALA_HOME}/lib/jsp-api-2.1-6.1.14.jar:${IMPALA_HOME}/lib/jsr305-1.3.9.jar:${IMPALA_HOME}/lib/junit-4.8.2.jar:${IMPALA_HOME}/lib/libfb303-0.9.0.jar:${IMPALA_HOME}/lib/libhadoop.so:${IMPALA_HOME}/lib/libhadoop.so.1.0.0:${IMPALA_HOME}/lib/libhdfs.so:${IMPALA_HOME}/lib/libhdfs.so.0.0.0:${IMPALA_HOME}/lib/libthrift-0.9.0.jar:${IMPALA_HOME}/lib/log4j-1.2.16.jar:${IMPALA_HOME}/lib/management-api-3.0.0-b012.jar:${IMPALA_HOME}/lib/metrics-core-2.1.2.jar:${IMPALA_HOME}/lib/mockito-all-1.8.5.jar:${IMPALA_HOME}/lib/netty-3.2.4.Final.jar:${IMPALA_HOME}/lib/netty-3.4.0.Final.jar:${IMPALA_HOME}/lib/paranamer-2.3.jar:${IMPALA_HOME}/lib/postgresql-9.0-801.jdbc4.jar:${IMPALA_HOME}/lib/protobuf-java-2.4.0a.jar:${IMPALA_HOME}/lib/servlet-api-2.5-20081211.jar:${IMPALA_HOME}/lib/servlet-api-2.5-6.1.14.jar:${IMPALA_HOME}/lib/slf4j-api-1.6.1.jar:${IMPALA_HOME}/lib/slf4j-log4j12-1.6.1.jar:${IMPALA_HOME}/lib/snappy-java-1.0.4.1.jar:${IMPALA_HOME}/lib/sqlline-1_0_2.jar:${IMPALA_HOME}/lib/stax-api-1.0.1.jar:${IMPALA_HOME}/lib/stringtemplate-3.1-b1.jar:${IMPALA_HOME}/lib/transaction-api-1.1.jar:${IMPALA_HOME}/lib/velocity-1.7.jar:${IMPALA_HOME}/lib/xz-1.0.jar:${IMPALA_HOME}/lib/zookeeper-3.4.5-cdh4.3.0.jar::${CLASSPATH}"
+export CLASSPATH="${IMPALA_CONF_DIR}:${HADOOP_CONF_DIR}:${HIVE_CONF_DIR}:${HBASE_CONF_DIR}:${CLASSPATH}"
+export CLASSPATH="${MYSQL_CONNECTOR_JAR}:${CLASSPATH}"
+for JAR_FILE in /var/lib/impala/*.jar; do
+    export CLASSPATH="${JAR_FILE}:${CLASSPATH}"
+done
+if [ -n "${AUX_CLASSPATH}" ]; then
+    export CLASSPATH="${AUX_CLASSPATH}:${CLASSPATH}"
+fi
+
+# Add non-standard kinit location to PATH
+if [ -d /usr/kerberos/bin ]; then
+  export PATH=/usr/kerberos/bin:${PATH}
+fi
+
+exec ${IMPALA_BIN}/statestored "$@"
